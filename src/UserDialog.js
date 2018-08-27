@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './UserDialog.css'
+import {signUp} from './leanCloud'
 
 export default class UserDialog extends Component{
   constructor(props){
@@ -17,7 +18,17 @@ export default class UserDialog extends Component{
       selected: e.target.value
     })
   }
-  signUp(e){}
+  signUp(e){
+    e.preventDefault()
+    let {username,password} = this.state.formData
+    let success = (user) =>{
+      this.props.onSignUp.call(null,user)
+    }
+    let error = (error) => {
+      console.log(error)
+    }
+    signUp(username,password,success,error)
+  }
   signIn(e){}
   changeFormData(key,e){
     let stateCopy = JSON.parse(JSON.stringify(this.state))
@@ -58,9 +69,13 @@ export default class UserDialog extends Component{
     return (
       <div className="UserDialog-Wrapper">
         <div className="UserDialog">
-          <nav onChange={this.switch.bind(this)}>
-            <label><input type="radio" value="signUp" checked={this.state.selected === "signUp"}/> 注册</label>
-            <label><input type="radio" value="signIn" checked={this.state.selected === "signIn"}/> 登录</label>
+          <nav>
+            <label>
+              <input type="radio" value="signUp" checked={this.state.selected === "signUp" } onChange={this.switch.bind(this)}/> 注册
+            </label>
+            <label>
+              <input type="radio" value="signIn" checked={this.state.selected === "signIn"} onChange={this.switch.bind(this)}/> 登录
+            </label>
           </nav>
           <div className="panes">
             {this.state.selected === 'signUp' ? signUpForm : null}
